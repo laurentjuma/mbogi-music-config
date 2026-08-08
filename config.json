@@ -9,5 +9,10 @@
     "radio": true,
     "tv": true,
     "blockedRadioFeed": []
+  },
+  "update": {
+    "versionCode": 3050148,
+    "name": "3.5.42 (build 11)",
+    "url": "https://github.com/laurentjuma/mbogi-music-releases/releases/tag/v3.5.42-11"
   }
 }
