@@ -43,6 +43,37 @@ a section simply skip it, so the file can run ahead of what is installed.
 says — and the app does not even fetch `ads.json`. This is the one to reach for to pull all
 advertising immediately.
 
+## The `update` section
+
+The app is not distributed through Play, so nothing tells anyone a new build exists. This does:
+
+```json
+"update": {
+  "on": true,
+  "versionCode": 3050143,
+  "name": "3.5.42 (build 6)",
+  "url": "https://github.com/laurentjuma/mbogi-music-releases/releases/latest"
+}
+```
+
+An app whose own `versionCode` is lower than the one here shows a dismissible dialog offering the
+download. `on: false`, or leaving the section out, means nobody is told anything.
+
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `on` | no, defaults `true` | `false` stops the prompt without losing the rest |
+| `versionCode` | yes | The `versionCode` of the build being advertised. Must be **higher** than the installed one or nothing happens |
+| `name` | no | What the dialog calls it, e.g. `3.5.42 (build 6)`. Falls back to generic wording |
+| `url` | yes | Opened in the browser. Point it at the release **page**, not an APK — there is one file per architecture and the reader has to choose |
+
+`versionCode` is the release workflow's run number added to a base, so it climbs with every release
+even when `versionName` does not. Take it from the build you are advertising rather than guessing:
+publishing a number nothing has reached leaves everyone permanently prompted for a download that
+does not exist.
+
+Publishing a release and announcing it are separate steps on purpose. A build that turns out bad is
+simply never named here, and nobody is ever sent to it.
+
 ## `ads.json`
 
 ```json
