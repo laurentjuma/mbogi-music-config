@@ -1,60 +1,68 @@
 # mbogi-music-config
 
-Runtime configuration for the Mbogi Music Android app. One file, `config.json`, read by the app so
-that things which change often — where ads appear, what they show — can change without shipping a
-release.
+Runtime configuration for the Mbogi Music Android app, so that things which change often — where ads
+appear, what they show, whether they run at all — can change without shipping a release.
 
-The app currently ships a copy of this file as a bundled asset (`app/src/main/assets/config.json`)
-and reads it at startup. Fetching it from this repository at runtime is the next step; the bundled
-copy stays as the fallback for a first run, a failed fetch, or no network.
+Two files:
 
-## Shape
+- **`config.json`** — the app's own settings. Small, always read.
+- **`ads.json`** — the ad slots. Only fetched when `config.json` says ads are on.
+
+The app fetches both at startup and stores them in internal storage, preferring that copy on later
+runs. It also ships a copy of each as a bundled asset, which is what a fresh install shows before the
+first fetch lands and what any install falls back to when the fetch fails. There is never no config,
+only a stale one.
+
+Because the fetch happens after the first screens have drawn, an edit here reaches a running app on
+its **next start**, not immediately.
+
+## `config.json`
 
 ```json
 {
   "version": 1,
-  "ads": { }
+  "ads": {
+    "on": true
+  }
 }
 ```
 
 `version` describes the file format, not the app. Bump it only if an existing section changes shape
-in a way older builds cannot read.
+in a way older builds cannot read. Each file carries its own.
 
 Everything else is a **section**, keyed by what it configures. `ads` is the only one so far. A new
 section is a new key: adding `"player": { }` alongside `ads` does not disturb anything, because each
 consumer reads only the key it knows and ignores the rest. Older app builds that have never heard of
 a section simply skip it, so the file can run ahead of what is installed.
 
-## The `ads` section
+`ads.on` is the universal switch. Setting it to `false` stops every slot at once, whatever `ads.json`
+says — and the app does not even fetch `ads.json`. This is the one to reach for to pull all
+advertising immediately.
+
+## `ads.json`
 
 ```json
 {
-  "ads": {
-    "on": true,
-    "slots": {
-      "queue": {
-        "on": true,
-        "type": "image",
-        "media": "https://cdn.mbogimusic.com/ads/queue-banner.png",
-        "click": "https://www.mbogimusic.com",
-        "requiresMbogiContent": true
-      }
+  "version": 1,
+  "slots": {
+    "queue": {
+      "on": true,
+      "type": "image",
+      "media": "https://cdn.mbogimusic.com/ads/queue-banner.png",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
     }
   }
 }
 ```
 
-### Switching ads off
+### Switching one screen off
 
-There are two switches, both defaulting to `true` when left out:
+`slots.<id>.on` stops one screen while leaving its entry intact, so the creative, the click URL and
+everything else survive to be switched back on later. It defaults to `true` when left out.
 
-- **`ads.on`** is the universal one. Setting it to `false` stops every slot at once, whatever the
-  individual entries say. This is the one to reach for to pull all advertising immediately.
-- **`slots.<id>.on`** stops one screen while leaving its entry intact, so the creative, the click
-  URL and everything else survives to be switched back on later.
-
-Deleting a slot entry does the same as `"on": false`, but loses the settings with it. Use `on` to
-pause a screen, deletion to retire it.
+Deleting a slot entry does the same, but loses the settings with it. Use `on` to pause a screen,
+deletion to retire it.
 
 ### Which screens can show an ad
 
@@ -114,22 +122,23 @@ regardless of what the list holds.
 
 It defaults to `true`, which is the behaviour every slot had before the setting existed.
 
-## Two things that also have to be true
+## What this file cannot decide
 
 An ad only appears if, on top of a slot entry that is switched on:
 
-1. The user has **Show ads** on — Settings → User interface → Ads. It is off by default, and no
-   config here can override it.
-2. For AdMob slots, the Google Mobile Ads SDK initialised at app start, which it only does when that
-   setting was already on.
+1. The user has not removed ads — Settings → User interface → Ads. Ads are on by default and the
+   button there turns them off; no config here can override that choice. It also stops `ads.json`
+   being fetched at all, so someone who has removed ads never asks this repository for anything.
+2. For AdMob slots, the Google Mobile Ads SDK initialised at app start, which it only does when ads
+   were already on for that user.
 
 ## Editing
 
-`config.json` is read by a program, so it has to stay valid JSON — no trailing commas, no comments.
+These are read by a program, so they have to stay valid JSON — no trailing commas, no comments.
 Validate before pushing:
 
 ```sh
-python3 -m json.tool config.json > /dev/null && echo ok
+python3 -m json.tool config.json > /dev/null && python3 -m json.tool ads.json > /dev/null && echo ok
 ```
 
 To move a screen from your own creative to an AdMob banner, change its entry in place:
@@ -143,5 +152,13 @@ To move a screen from your own creative to an AdMob banner, change its entry in 
 }
 ```
 
-To switch a screen off, set its `on` to `false`. To stop all advertising at once, set `ads.on` to
-`false`.
+To switch a screen off, set its `on` to `false` in `ads.json`. To stop all advertising at once, set
+`ads.on` to `false` in `config.json`.
+
+## Serving
+
+The app reads these over plain HTTPS from
+`https://raw.githubusercontent.com/laurentjuma/mbogi-music-config/main/`, with no credentials. That
+only works while this repository is **public** — a private repository returns 404 to an
+unauthenticated request, and shipping a token in an app that anyone can unzip is not a fix. Whatever
+lands here is world-readable in practice, so it should hold nothing but ad creative and switches.

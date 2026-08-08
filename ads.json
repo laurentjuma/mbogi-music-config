@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "slots": {
+    "feed_item_list": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Podcast",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
+    },
+    "playlist": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Playlist",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
+    },
+    "episodes_list": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Episodes",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
+    },
+    "favourite_episodes": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Favourites",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
+    },
+    "queue": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Queue",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
+    }
+  }
+}
