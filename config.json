@@ -1,30 +1,41 @@
 {
   "version": 1,
   "ads": {
+    "on": true,
     "slots": {
       "feed_item_list": {
-        "type": "admob",
-        "adUnitId": "ca-app-pub-3940256099942544/9214589741",
+        "on": true,
+        "type": "image",
+        "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Podcast",
+        "click": "https://www.mbogimusic.com",
         "requiresMbogiContent": true
       },
       "playlist": {
-        "type": "admob",
-        "adUnitId": "ca-app-pub-3940256099942544/9214589741",
+        "on": true,
+        "type": "image",
+        "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Playlist",
+        "click": "https://www.mbogimusic.com",
         "requiresMbogiContent": true
       },
       "episodes_list": {
-        "type": "admob",
-        "adUnitId": "ca-app-pub-3940256099942544/1039341195",
+        "on": true,
+        "type": "image",
+        "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Episodes",
+        "click": "https://www.mbogimusic.com",
         "requiresMbogiContent": true
       },
       "favourite_episodes": {
-        "type": "admob",
-        "adUnitId": "ca-app-pub-3940256099942544/1039341195",
+        "on": true,
+        "type": "image",
+        "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Favourites",
+        "click": "https://www.mbogimusic.com",
         "requiresMbogiContent": true
       },
       "queue": {
-        "type": "admob",
-        "adUnitId": "ca-app-pub-3940256099942544/1039341195",
+        "on": true,
+        "type": "image",
+        "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Queue",
+        "click": "https://www.mbogimusic.com",
         "requiresMbogiContent": true
       }
     }

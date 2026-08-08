@@ -30,10 +30,13 @@ a section simply skip it, so the file can run ahead of what is installed.
 ```json
 {
   "ads": {
+    "on": true,
     "slots": {
       "queue": {
-        "type": "admob",
-        "adUnitId": "ca-app-pub-…/1039341195",
+        "on": true,
+        "type": "image",
+        "media": "https://cdn.mbogimusic.com/ads/queue-banner.png",
+        "click": "https://www.mbogimusic.com",
         "requiresMbogiContent": true
       }
     }
@@ -41,11 +44,23 @@ a section simply skip it, so the file can run ahead of what is installed.
 }
 ```
 
+### Switching ads off
+
+There are two switches, both defaulting to `true` when left out:
+
+- **`ads.on`** is the universal one. Setting it to `false` stops every slot at once, whatever the
+  individual entries say. This is the one to reach for to pull all advertising immediately.
+- **`slots.<id>.on`** stops one screen while leaving its entry intact, so the creative, the click
+  URL and everything else survives to be switched back on later.
+
+Deleting a slot entry does the same as `"on": false`, but loses the settings with it. Use `on` to
+pause a screen, deletion to retire it.
+
 ### Which screens can show an ad
 
 A **slot** is one place in the app that can hold an ad. A slot named under `slots` shows what its
-entry says; **a slot left out of the file shows nothing**. Omission is how a screen is turned off,
-so this list is the list of places ads appear.
+entry says; **a slot left out of the file shows nothing**. So this list, minus anything switched
+off, is the list of places ads appear.
 
 | Slot id | Screen |
 | --- | --- |
@@ -70,13 +85,22 @@ exist yet is harmless.
 
 | Field | Applies to | Required | Meaning |
 | --- | --- | --- | --- |
+| `on` | all | no, defaults `true` | `false` switches this slot off without losing its settings |
 | `type` | all | yes | `admob`, `image` or `video` |
 | `adUnitId` | `admob` | yes | Google AdMob banner unit id |
 | `media` | `image`, `video` | yes | URL of the image or video to display |
 | `click` | `image`, `video` | no | URL opened in the browser when tapped; omit to make it non-tappable |
 | `requiresMbogiContent` | all | no, defaults `true` | See below |
 
-`image` is drawn at full width, keeping its aspect ratio. `video` plays muted and looping.
+### Creative size
+
+Every ad is drawn as a banner: the full width of the screen, 60dp tall, the same strip an AdMob
+banner occupies. `image` and `video` are scaled to fill that strip and cropped where they do not
+fit, so **supply banner-shaped creatives** — roughly 8:1. Anything squarer arrives with its top and
+bottom cut off.
+
+Good sizes are 1200×150, or the standard banner units 468×60 and 320×50. `video` plays muted and on
+a loop.
 
 An entry missing a field it needs is dropped and that slot shows nothing — one bad entry does not
 take the others down with it. A malformed file means no ads at all rather than a crash.
@@ -92,7 +116,7 @@ It defaults to `true`, which is the behaviour every slot had before the setting 
 
 ## Two things that also have to be true
 
-An ad only appears if, on top of a slot entry:
+An ad only appears if, on top of a slot entry that is switched on:
 
 1. The user has **Show ads** on — Settings → User interface → Ads. It is off by default, and no
    config here can override it.
@@ -108,15 +132,16 @@ Validate before pushing:
 python3 -m json.tool config.json > /dev/null && echo ok
 ```
 
-To move a screen from AdMob to your own creative, change its entry in place:
+To move a screen from your own creative to an AdMob banner, change its entry in place:
 
 ```json
 "queue": {
-  "type": "image",
-  "media": "https://cdn.mbogimusic.com/ads/promo.png",
-  "click": "https://www.mbogimusic.com/promo",
+  "on": true,
+  "type": "admob",
+  "adUnitId": "ca-app-pub-…/1039341195",
   "requiresMbogiContent": false
 }
 ```
 
-To switch a screen off, delete its entry.
+To switch a screen off, set its `on` to `false`. To stop all advertising at once, set `ads.on` to
+`false`.
