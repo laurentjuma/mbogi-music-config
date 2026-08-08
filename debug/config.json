@@ -2,11 +2,5 @@
   "version": 1,
   "ads": {
     "on": true
-  },
-  "update": {
-    "on": true,
-    "versionCode": 3050143,
-    "name": "3.5.42 (build 6)",
-    "url": "https://github.com/laurentjuma/mbogi-music-releases/releases/latest"
   }
 }

@@ -91,6 +91,12 @@ does not exist.
 Publishing a release and announcing it are separate steps on purpose. A build that turns out bad is
 simply never named here, and nobody is ever sent to it.
 
+`debug/config.json` deliberately has **no** `update` section. A debug build is a different
+application id from the release it would be told to download, so the new APK cannot install over it
+and the prompt is one nobody can act on — and a debug build's `versionCode` is the bare base, below
+every release, so it would be prompted forever. Add the section there while you are working on the
+prompt itself, and take it out again afterwards.
+
 ## `ads.json`
 
 ```json
