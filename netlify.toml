@@ -1,5 +1,5 @@
 [build]
-  command = "mkdir -p dist && cp config.json ads.json dist/"
+  command = "mkdir -p dist/debug && cp config.json ads.json dist/ && cp debug/config.json debug/ads.json dist/debug/"
   publish = "dist"
 
 [[headers]]

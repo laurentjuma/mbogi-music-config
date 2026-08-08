@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "slots": {
+    "feed_item_list": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+feed_item_list",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
+    },
+    "playlist": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+playlist",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
+    },
+    "episodes_list": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+episodes_list",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
+    },
+    "favourite_episodes": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+favourite_episodes",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
+    },
+    "queue": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+queue",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": true
+    }
+  }
+}

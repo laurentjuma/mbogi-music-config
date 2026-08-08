@@ -8,6 +8,10 @@ Two files:
 - **`config.json`** — the app's own settings. Small, always read.
 - **`ads.json`** — the ad slots. Only fetched when `config.json` says ads are on.
 
+And the same pair again under **`debug/`**, which is what debug builds of the app read. Release
+builds read the ones at the root. They are separate files on the same site, so experimenting in
+`debug/` cannot reach anybody's phone — see [Debug config](#debug-config).
+
 The app fetches both at startup and stores them in internal storage, preferring that copy on later
 runs. It also ships a copy of each as a bundled asset, which is what a fresh install shows before the
 first fetch lands and what any install falls back to when the fetch fails. There is never no config,
@@ -131,6 +135,33 @@ An ad only appears if, on top of a slot entry that is switched on:
    being fetched at all, so someone who has removed ads never asks this repository for anything.
 2. For AdMob slots, the Google Mobile Ads SDK initialised at app start, which it only does when ads
    were already on for that user.
+
+## Debug config
+
+`debug/config.json` and `debug/ads.json` are the same two documents, in the same shape, read only by
+debug builds. Which one a build reads is decided at compile time by `CONFIG_BASE_URL` in the app's
+`build.gradle`, so it is not something a running app can be talked into changing.
+
+Edit them as freely as you like: a broken slot, a switch left off, a creative that is not ready.
+Nothing there reaches an installed release build. The debug creatives are deliberately orange and
+labelled `DEBUG`, so a screenshot says which config produced it without anyone having to check.
+
+Both pairs are validated and deployed by the same push, so a malformed debug file fails the workflow
+and stops the release config deploying with it. If that ever becomes annoying, split the validation
+step rather than dropping it.
+
+To iterate faster than a push, serve the files from your own machine and point a debug build at them:
+
+```sh
+python3 -m http.server 8765           # in a checkout of this repository
+```
+
+```sh
+./gradlew :app:installPlayDebug -PconfigBaseUrl=http://10.0.2.2:8765/    # 10.0.2.2 is the host, from an emulator
+```
+
+Restart the app to pick up an edit. `-PconfigBaseUrl` only affects the debug build type, and is not
+committed anywhere; leave it out and you are back on `debug/`.
 
 ## Editing
 

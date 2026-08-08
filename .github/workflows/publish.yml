@@ -13,8 +13,9 @@ jobs:
 
       - name: Validate JSON
         run: |
-          python3 -m json.tool config.json > /dev/null
-          python3 -m json.tool ads.json > /dev/null
+          for f in config.json ads.json debug/config.json debug/ads.json; do
+            python3 -m json.tool "$f" > /dev/null || { echo "::error::$f is not valid JSON"; exit 1; }
+          done
 
       - name: Deploy to Netlify
         env:
