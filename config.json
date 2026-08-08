@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "ads": {
+    "slots": {
+      "feed_item_list": {
+        "type": "admob",
+        "adUnitId": "ca-app-pub-3940256099942544/9214589741",
+        "requiresMbogiContent": true
+      },
+      "playlist": {
+        "type": "admob",
+        "adUnitId": "ca-app-pub-3940256099942544/9214589741",
+        "requiresMbogiContent": true
+      },
+      "episodes_list": {
+        "type": "admob",
+        "adUnitId": "ca-app-pub-3940256099942544/1039341195",
+        "requiresMbogiContent": true
+      },
+      "favourite_episodes": {
+        "type": "admob",
+        "adUnitId": "ca-app-pub-3940256099942544/1039341195",
+        "requiresMbogiContent": true
+      },
+      "queue": {
+        "type": "admob",
+        "adUnitId": "ca-app-pub-3940256099942544/1039341195",
+        "requiresMbogiContent": true
+      }
+    }
+  }
+}
