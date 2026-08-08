@@ -2,5 +2,12 @@
   "version": 1,
   "ads": {
     "on": true
+  },
+  "explore": {
+    "on": true,
+    "podcasts": true,
+    "radio": true,
+    "tv": true,
+    "blockedRadioFeed": []
   }
 }

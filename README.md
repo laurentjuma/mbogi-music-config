@@ -27,6 +27,13 @@ its **next start**, not immediately.
   "version": 1,
   "ads": {
     "on": true
+  },
+  "explore": {
+    "on": true,
+    "podcasts": true,
+    "radio": true,
+    "tv": true,
+    "blockedRadioFeed": []
   }
 }
 ```
@@ -34,10 +41,11 @@ its **next start**, not immediately.
 `version` describes the file format, not the app. Bump it only if an existing section changes shape
 in a way older builds cannot read. Each file carries its own.
 
-Everything else is a **section**, keyed by what it configures. `ads` is the only one so far. A new
-section is a new key: adding `"player": { }` alongside `ads` does not disturb anything, because each
-consumer reads only the key it knows and ignores the rest. Older app builds that have never heard of
-a section simply skip it, so the file can run ahead of what is installed.
+Everything else is a **section**, keyed by what it configures: `ads`, `update`, `explore`, `message`.
+A new section is a new key: adding `"player": { }` alongside them does not disturb anything, because
+each consumer reads only the key it knows and ignores the rest. Older app builds that have never
+heard of a section simply skip it, so the file can run ahead of what is installed — builds from
+before `explore` existed show the screen as they always did, whatever this file says.
 
 `ads.on` is the universal switch. Setting it to `false` stops every slot at once, whatever `ads.json`
 says — and the app does not even fetch `ads.json`. This is the one to reach for to pull all
@@ -96,6 +104,110 @@ application id from the release it would be told to download, so the new APK can
 and the prompt is one nobody can act on — and a debug build's `versionCode` is the bare base, below
 every release, so it would be prompted forever. Add the section there while you are working on the
 prompt itself, and take it out again afterwards.
+
+## The `explore` section
+
+What the Explore screen offers, and whether it is there at all:
+
+```json
+"explore": {
+  "on": true,
+  "podcasts": true,
+  "radio": true,
+  "tv": true,
+  "blockedRadioFeed": []
+}
+```
+
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `on` | no, defaults `true` | `false` takes the whole screen away |
+| `podcasts` | no, defaults `true` | `false` drops the Podcasts tab |
+| `radio` | no, defaults `true` | `false` drops the Radio tab |
+| `tv` | no, defaults `true` | `false` drops the TV tab |
+| `blockedRadioFeed` | no | Radio stations to withdraw, by title or playlist URL |
+
+Everything here fails **open**: a missing section, a missing field, a value of the wrong type all
+mean visible. A config that cannot be read never hides the app.
+
+`on: false` removes Explore from the bottom navigation and its overflow, from the nav drawer, from
+the drawer customization dialog so a user cannot put it back, and from the hybrid side nav. Anything
+still pointing at it — a saved last screen, a default page — lands on **Add Feed** instead, which is
+the one screen offering what Explore did: the directory searches, add by RSS or m3u, OPML import.
+
+The three tab switches drop one tab each. The tab strip disappears when a single tab is left, so the
+page fills the screen. Turning all three off is the same as `on: false`.
+
+### Withdrawing a tab takes its feeds with it
+
+**This deletes subscriptions.** Hiding `radio` deletes every radio playlist the user has subscribed
+to, hiding `tv` every TV one, and `on: false` deletes both — the feeds, their episodes, downloaded
+media, queue entries and download log. It happens on the next start after the edit lands. Turning
+the tab back on restores the tab, not the subscriptions; the stations return to the grid and can be
+subscribed again.
+
+That is deliberate: a station kept after its tab is gone cannot be found, refreshed or replaced, and
+it goes on playing from a source we no longer offer.
+
+**Podcasts are the exception.** Hiding `podcasts` hides the tab and deletes nothing, because a
+podcast subscribed from Explore is an ordinary RSS feed, indistinguishable from one the user added
+by search, by URL, or by OPML import. Deleting "all podcasts" would mean deleting a library built
+elsewhere.
+
+### `blockedRadioFeed`
+
+For withdrawing one station rather than the whole tab:
+
+```json
+"blockedRadioFeed": [
+  "Some Station",
+  "https://raw.githubusercontent.com/…/stations/somestation.m3u"
+]
+```
+
+An entry matches a station's **title or its playlist URL**, trimmed and ignoring case, so a station
+can be pulled by name without looking up its stream address. It leaves the Explore grid, and if it
+was subscribed the feed and everything in it is deleted, exactly as above.
+
+Only playlists the app subscribed from Explore are eligible, so a podcast that happens to share a
+station's name is never touched. Taking an entry back out returns the tile and stops the deleting;
+what was already deleted stays deleted.
+
+## The `message` section
+
+For telling people something — an outage, a migration, a station that is not coming back:
+
+```json
+"message": {
+  "id": "radio-move-2026-08",
+  "title": "Scheduled maintenance",
+  "body": "Radio stations move to a new provider tonight. Some may be briefly unavailable.",
+  "action": {
+    "label": "Read more",
+    "url": "https://www.mbogimusic.com/status"
+  },
+  "repeat": false
+}
+```
+
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `on` | no, defaults `true` | `false` stops the dialog without losing the wording |
+| `id` | yes | Identifies **this** message. Shown once per id — change it to say something new |
+| `title` | no | Dialog title. Left out, the dialog is body-only |
+| `body` | yes | What it says. No message without one |
+| `action.url` | no | Opened when the button is tapped: a web link, or a deep link the app handles |
+| `action.label` | no | What the button says. Falls back to `Ok` |
+| `repeat` | no, defaults `false` | `true` shows it at every launch until the id changes |
+
+The dialog appears on the first launch **after** the edit has landed, like everything else here, and
+is recorded as seen only once the user answers it — a message is not lost to an app that restarted
+while it was up. Editing the wording without changing the `id` reaches nobody who has already seen
+it; a new `id` reaches everyone again.
+
+An available update takes precedence: the two dialogs never stack, and the message waits for the
+launch after the update prompt is out of the way. Leave the section out when there is nothing to say
+— an empty `body`, or `on: false`, means no dialog.
 
 ## `ads.json`
 
