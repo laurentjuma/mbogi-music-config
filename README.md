@@ -65,6 +65,23 @@ download. `on: false`, or leaving the section out, means nobody is told anything
 | `versionCode` | yes | The `versionCode` of the build being advertised. Must be **higher** than the installed one or nothing happens |
 | `name` | no | What the dialog calls it, e.g. `3.5.42 (build 6)`. Falls back to generic wording |
 | `url` | yes | Opened in the browser. Point it at the release **page**, not an APK — there is one file per architecture and the reader has to choose |
+| `force` | no, defaults `false` | Replaces the whole app with a full-screen download prompt. Read the warning below before using it |
+
+### `force`
+
+`force: true` stops the app being usable at all: a full-screen page with a Download button, no way
+past it, and back leaves the app rather than returning to it. It is for a build that must not keep
+running — one corrupting data, or talking to something that no longer exists — and not for
+encouraging upgrades.
+
+Two things to be sure of before setting it. **The `versionCode` must be one that people can actually
+install**, or everyone is locked out with nowhere to go. And **you are locking out everyone below
+that number**, including anyone whose device cannot run the new build.
+
+The way back is this file: remove `force`, and each app frees itself on its next launch. The config
+is still fetched while the screen is up, and the app does not use a cached copy of it without asking
+the server first, so the fix is not held up behind a cache. It still takes a relaunch, and it still
+needs the device to be online — someone offline stays locked out until they are not.
 
 `versionCode` is the release workflow's run number added to a base, so it climbs with every release
 even when `versionName` does not. Take it from the build you are advertising rather than guessing:
