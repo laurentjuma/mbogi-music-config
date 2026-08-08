@@ -11,7 +11,7 @@
     "playlist": {
       "on": true,
       "type": "image",
-      "media": "https://dummyimage.com/1200x150/0066ff/ffffff.png&text=Deploy+Test",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Playlist",
       "click": "https://www.mbogimusic.com",
       "requiresMbogiContent": true
     },
