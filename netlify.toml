@@ -1,0 +1,9 @@
+[build]
+  command = "mkdir -p dist && cp config.json ads.json dist/"
+  publish = "dist"
+
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+    Cache-Control = "public, max-age=300"

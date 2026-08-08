@@ -157,8 +157,19 @@ To switch a screen off, set its `on` to `false` in `ads.json`. To stop all adver
 
 ## Serving
 
-The app reads these over plain HTTPS from
-`https://raw.githubusercontent.com/laurentjuma/mbogi-music-config/main/`, with no credentials. That
-only works while this repository is **public** — a private repository returns 404 to an
-unauthenticated request, and shipping a token in an app that anyone can unzip is not a fix. Whatever
-lands here is world-readable in practice, so it should hold nothing but ad creative and switches.
+This repository is private. The app reads the config from
+
+```
+https://mbogi-music-config.netlify.app/
+```
+
+Pushing to `main` runs `.github/workflows/publish.yml`, which validates both files and deploys them
+there. Only `config.json` and `ads.json` are published — `netlify.toml` copies those two into the
+publish directory, so everything else here, this README included, stays off the public site.
+
+Keeping the repository private hides the history and anything else in it, not the config itself. The
+app fetches with no credentials, so whatever is published is world-readable by anyone who unzips the
+app and follows the URL. Put nothing here that is not meant to be read.
+
+Responses are cached for five minutes, so an edit takes up to that long to reach a device that asks
+for it — on top of the app only asking at startup.
