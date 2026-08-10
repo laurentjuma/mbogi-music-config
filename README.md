@@ -185,7 +185,8 @@ Which games the app offers, and whether the Games screen is there at all:
     { "on": true, "name": "cover-puzzle" },
     { "on": true, "name": "cover-reveal" },
     { "on": true, "name": "lyrical-genius" },
-    { "on": true, "name": "reverse-musicology" }
+    { "on": true, "name": "reverse-musicology" },
+    { "on": true, "name": "wave-jump" }
   ]
 }
 ```
@@ -193,12 +194,21 @@ Which games the app offers, and whether the Games screen is there at all:
 | Field | Required | Meaning |
 | --- | --- | --- |
 | `on` | no, defaults `true` | `false` takes the whole Games screen away |
-| `list` | no | One entry per game. Leaving it out means every game the build has |
-| `list[].name` | yes | The game's id — one of the four above |
-| `list[].on` | no, defaults `true` | `false` withdraws that one game |
+| `list` | no | The games to offer, **in the order to offer them**. Leaving it out means every game the build has, in the order it registered them |
+| `list[].name` | yes | The game's id — one of the five above |
+| `list[].on` | no, defaults `true` | `false` withdraws that one game, same as leaving it out |
 
-Like `explore`, everything here fails **open**: a missing section, a missing field, a value of the
-wrong type all mean visible. A config that cannot be read never hides the app.
+**A present `list` is the whole truth.** It decides both which games appear and what order they
+appear in, so reordering the entries reorders the hub without a release. A game the build has and
+the list does not name does **not** appear.
+
+The consequence worth holding on to: **a game shipped after this file was last edited is invisible
+until you add it here.** Releasing a new game is therefore two steps, and this is the second one.
+
+Failing open still covers the case that matters, though. A missing `games` section, a section with no
+`list`, or a file that cannot be parsed at all means *unspecified*, which is every game the build
+has — so a broken config leaves the hub alone rather than emptying it. Only a `list` that is present
+and readable takes control.
 
 `on: false` removes Games from the bottom navigation and its More menu, from the nav drawer, and from
 the drawer customization dialog so a user cannot put it back. Anything still pointing at it — a saved
@@ -207,13 +217,18 @@ page too, so a first run does not introduce a screen the app does not have; that
 rather than three.
 
 A game named here that the installed build does not have is ignored, so this may run ahead of what is
-released. The reverse also holds, and matters more: **a game the app has and this file does not
-mention is on.** Only the entries switched off are read, so a game shipped after this file was last
-edited appears rather than vanishing. To withdraw one, name it with `on: false` — deleting its entry
-does nothing.
+released: naming a game before it ships is harmless, and it appears the moment a build has it.
 
-Switching every game off is the same as `on: false`: a hub with nothing in it is no hub, so the
-screen goes with them.
+To withdraw a game, either set its `on` to `false` or delete its entry — both leave it out, and the
+first says why. Prefer `on: false` when you mean to bring it back.
+
+Switching every game off, or an empty `list`, is the same as `on: false`: a hub with nothing in it is
+no hub, so the screen goes with them.
+
+The config cannot *add* a game. A game is an activity, its resources and its own Gradle module, all
+compiled into the build; this file chooses among what is already there and orders it. That is why
+`name` has to match a `GameEntry` id exactly — the app is matching your string against what it
+registered at startup, and a typo silently drops the game.
 
 Unlike `explore`, withdrawing a game **deletes nothing**. A game keeps no library of its own; it
 draws from the user's music each time it is played, and their scores are their own.
