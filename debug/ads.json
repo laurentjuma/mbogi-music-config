@@ -70,6 +70,13 @@
       "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+reverse_musicology",
       "click": "https://www.mbogimusic.com",
       "requiresMbogiContent": false
+    },
+    "wave_jump": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+wave_jump",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
     }
   }
 }
