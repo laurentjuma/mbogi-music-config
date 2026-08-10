@@ -16,7 +16,8 @@
       { "on": true, "name": "cover-puzzle" },
       { "on": true, "name": "cover-reveal" },
       { "on": true, "name": "lyrical-genius" },
-      { "on": true, "name": "reverse-musicology" }
+      { "on": true, "name": "reverse-musicology" },
+      { "on": true, "name": "wave-jump" }
     ]
   },
   "update": {
