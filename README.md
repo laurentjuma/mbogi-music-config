@@ -9,7 +9,7 @@ Two files:
 - **`ads.json`** — the ad slots. Only fetched when `config.json` says ads are on.
 
 And the same pair again under **`debug/`**, which is what debug builds of the app read. Release
-builds read the ones at the root. They are separate files on the same site, so experimenting in
+builds read the ones at the root. They are separate files at separate URLs, so experimenting in
 `debug/` cannot reach anybody's phone — see [Debug config](#debug-config).
 
 The app fetches both at startup and stores them in internal storage, preferring that copy on later
@@ -369,9 +369,11 @@ Edit them as freely as you like: a broken slot, a switch left off, a creative th
 Nothing there reaches an installed release build. The debug creatives are deliberately orange and
 labelled `DEBUG`, so a screenshot says which config produced it without anyone having to check.
 
-Both pairs are validated and deployed by the same push, so a malformed debug file fails the workflow
-and stops the release config deploying with it. If that ever becomes annoying, split the validation
-step rather than dropping it.
+Both pairs go live on the same push and are validated by the same run, so a malformed debug file
+turns the run red without having held anything back — the release config is already served either
+way. The two no longer share a fate, which is the good half of the trade: a broken `debug/` file
+cannot delay a release config fix. It also means the red run is the only thing telling you, so read
+it.
 
 To iterate faster than a push, serve the files from your own machine and point a debug build at them:
 
@@ -411,19 +413,48 @@ To switch a screen off, set its `on` to `false` in `ads.json`. To stop all adver
 
 ## Serving
 
-This repository is private. The app reads the config from
+This repository is public, and the app reads these files from it directly:
 
 ```
-https://mbogi-music-config.netlify.app/
+https://raw.githubusercontent.com/laurentjuma/mbogi-music-config/main/
 ```
 
-Pushing to `main` runs `.github/workflows/publish.yml`, which validates both files and deploys them
-there. Only `config.json` and `ads.json` are published — `netlify.toml` copies those two into the
-publish directory, so everything else here, this README included, stays off the public site.
+so `config.json` is at `…/main/config.json` and the debug pair at `…/main/debug/config.json`.
+There is no build and no deploy: **a commit on `main` is the publish**. Nothing stands between an
+edit and the app, which cuts out the step that used to be forgotten, and takes away the one that
+used to catch mistakes — see below.
 
-Keeping the repository private hides the history and anything else in it, not the config itself. The
-app fetches with no credentials, so whatever is published is world-readable by anyone who unzips the
-app and follows the URL. Put nothing here that is not meant to be read.
+The whole repository is readable, not just the four JSON files. This README, the history, and
+anything else added here are public. The app fetched with no credentials even when this was private,
+so the config itself was always world-readable by anyone who unzipped the app and followed the URL;
+what changed is that everything around it is too. Put nothing here that is not meant to be read.
 
-Responses are cached for five minutes, so an edit takes up to that long to reach a device that asks
-for it — on top of the app only asking at startup.
+`raw.githubusercontent.com` answers with `cache-control: max-age=300` and an ETag, the same terms
+Netlify gave. An edit takes up to five minutes to reach a device that asks for it, on top of the app
+only asking at startup.
+
+### Invalid JSON now goes live, and it switches ads off
+
+This is the one thing the move away from Netlify made worse, and it is worth knowing exactly.
+
+`.github/workflows/publish.yml` still validates all four files, but it now runs **after** the push
+and publishes nothing — the push already did that. A red run is a fire alarm, not a gate.
+
+A commit that will not parse does not merely go stale. The app stores what it fetched **before** it
+tries to parse it, so the bad file replaces the last good copy in internal storage, and reading it
+back on the next launch gives the same unparseable text. The bundled asset is not a fallback here
+either; it is only reached when the stored file cannot be *read*, not when it cannot be *parsed*.
+What every device then runs is the empty config:
+
+- **ads off**, everywhere, until a valid file is fetched
+- no update prompt and no message, however they were set
+- Explore and Games fully visible, because those fail open
+
+Nothing rolls back on its own, and there is no cached copy left to roll back to. The way out is the
+same as `force`: push valid JSON, and each app fixes itself on its next launch.
+
+So validate before you push, not after:
+
+```sh
+for f in config.json ads.json debug/config.json debug/ads.json; do python3 -m json.tool "$f" > /dev/null || echo "BAD $f"; done && echo ok
+```

@@ -1,0 +1,23 @@
+name: Validate config
+
+# The app reads raw.githubusercontent.com directly, so a push to main is already the publish and
+# there is nothing here to deploy. This runs after the fact: it cannot hold a bad file back, only
+# tell you one went out. A red run means fix it now — see "Invalid JSON now goes live" in README.md.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON
+        run: |
+          for f in config.json ads.json debug/config.json debug/ads.json; do
+            python3 -m json.tool "$f" > /dev/null || { echo "::error file=$f::$f is not valid JSON and is being served right now"; exit 1; }
+          done
