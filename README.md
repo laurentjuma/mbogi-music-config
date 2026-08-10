@@ -41,7 +41,8 @@ its **next start**, not immediately.
 `version` describes the file format, not the app. Bump it only if an existing section changes shape
 in a way older builds cannot read. Each file carries its own.
 
-Everything else is a **section**, keyed by what it configures: `ads`, `update`, `explore`, `message`.
+Everything else is a **section**, keyed by what it configures: `ads`, `update`, `explore`, `games`,
+`message`.
 A new section is a new key: adding `"player": { }` alongside them does not disturb anything, because
 each consumer reads only the key it knows and ignores the rest. Older app builds that have never
 heard of a section simply skip it, so the file can run ahead of what is installed — builds from
@@ -172,6 +173,50 @@ was subscribed the feed and everything in it is deleted, exactly as above.
 Only playlists the app subscribed from Explore are eligible, so a podcast that happens to share a
 station's name is never touched. Taking an entry back out returns the tile and stops the deleting;
 what was already deleted stays deleted.
+
+## The `games` section
+
+Which games the app offers, and whether the Games screen is there at all:
+
+```json
+"games": {
+  "on": true,
+  "list": [
+    { "on": true, "name": "cover-puzzle" },
+    { "on": true, "name": "cover-reveal" },
+    { "on": true, "name": "lyrical-genius" },
+    { "on": true, "name": "reverse-musicology" }
+  ]
+}
+```
+
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `on` | no, defaults `true` | `false` takes the whole Games screen away |
+| `list` | no | One entry per game. Leaving it out means every game the build has |
+| `list[].name` | yes | The game's id — one of the four above |
+| `list[].on` | no, defaults `true` | `false` withdraws that one game |
+
+Like `explore`, everything here fails **open**: a missing section, a missing field, a value of the
+wrong type all mean visible. A config that cannot be read never hides the app.
+
+`on: false` removes Games from the bottom navigation and its More menu, from the nav drawer, and from
+the drawer customization dialog so a user cannot put it back. Anything still pointing at it — a saved
+last screen, a default page — lands on the home screen instead. The onboarding screen drops its games
+page too, so a first run does not introduce a screen the app does not have; that leaves two pages
+rather than three.
+
+A game named here that the installed build does not have is ignored, so this may run ahead of what is
+released. The reverse also holds, and matters more: **a game the app has and this file does not
+mention is on.** Only the entries switched off are read, so a game shipped after this file was last
+edited appears rather than vanishing. To withdraw one, name it with `on: false` — deleting its entry
+does nothing.
+
+Switching every game off is the same as `on: false`: a hub with nothing in it is no hub, so the
+screen goes with them.
+
+Unlike `explore`, withdrawing a game **deletes nothing**. A game keeps no library of its own; it
+draws from the user's music each time it is played, and their scores are their own.
 
 ## The `message` section
 
