@@ -35,6 +35,41 @@
       "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+queue",
       "click": "https://www.mbogimusic.com",
       "requiresMbogiContent": true
+    },
+    "games": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+games",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
+    },
+    "cover_puzzle": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+cover_puzzle",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
+    },
+    "cover_reveal": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+cover_reveal",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
+    },
+    "lyrical_genius": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+lyrical_genius",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
+    },
+    "reverse_musicology": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/ff8800/000000.png&text=DEBUG+reverse_musicology",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
     }
   }
 }

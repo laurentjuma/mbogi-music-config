@@ -35,6 +35,41 @@
       "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Queue",
       "click": "https://www.mbogimusic.com",
       "requiresMbogiContent": true
+    },
+    "games": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Games",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
+    },
+    "cover_puzzle": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Cover+Puzzle",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
+    },
+    "cover_reveal": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Cover+Reveal",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
+    },
+    "lyrical_genius": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Lyrical+Genius",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
+    },
+    "reverse_musicology": {
+      "on": true,
+      "type": "image",
+      "media": "https://dummyimage.com/1200x150/1db954/ffffff.png&text=Mbogi+Music+-+Reverse+Musicology",
+      "click": "https://www.mbogimusic.com",
+      "requiresMbogiContent": false
     }
   }
 }

@@ -255,9 +255,18 @@ off, is the list of places ads appear.
 | `favourite_episodes` | Favourite episodes |
 | `add_to_playlist` | Add to playlist |
 | `queue` | Queue |
+| `games` | The Games list |
+| `cover_puzzle` | Cover Puzzle, while it is being played |
+| `cover_reveal` | Cover Reveal, while it is being played |
+| `lyrical_genius` | Lyrical Genius, while it is being played |
+| `reverse_musicology` | Reverse Musicology, while it is being played |
 
 A slot id that the installed build does not recognise is ignored, so naming a screen that does not
 exist yet is harmless.
+
+The five games screens are not lists, so they report no Mbogi content and need
+`"requiresMbogiContent": false` to show anything at all — see [below](#requiresmbogicontent). Leaving
+it out defaults it to `true` and the slot stays blank, which looks exactly like a slot switched off.
 
 ### What a slot shows
 
@@ -291,6 +300,9 @@ imported podcasts, or on an empty list, the slot stays blank. Set it to `false` 
 regardless of what the list holds.
 
 It defaults to `true`, which is the behaviour every slot had before the setting existed.
+
+A screen that holds no list at all — the games — always reports no Mbogi content, so `true` there
+means the slot never draws. Those five entries have to say `false` explicitly.
 
 ## What this file cannot decide
 
